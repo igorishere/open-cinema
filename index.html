@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Cinema - Assistir Vídeos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <div class="container">
+        <h1>🎬 Open Cinema</h1>
+        
+        <div class="error" id="errorMsg"></div>
+        
+        <p class="info-text">Digite o ID do vídeo (ex: tt0137523) para começar a assistir</p>
+        
+        <div class="input-group">
+            <input 
+                type="text" 
+                id="videoId" 
+                placeholder="ID do vídeo (IMDb ID ou outro ID)" 
+                value="tt0137523"
+            >
+            <button onclick="loadVideo()">Carregar Vídeo</button>
+        </div>
+
+        <div class="video-container">
+            <iframe 
+                id="videoFrame" 
+                src="https://vidsrc-embed.ru/embed/movie/tt0137523" 
+                allowfullscreen
+            ></iframe>
+        </div>
+    </div>
+
+    <script src="themes.js"></script>
+    <script src="loadContent.js"></script>
+</body>
+</html>
