@@ -125,6 +125,78 @@ h1 {
     transition: color 0.3s ease;
 }
 
+.instructions {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-left: 4px solid var(--button-bg);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+
+.instructions h2 {
+    color: var(--heading-color);
+    font-size: 18px;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+}
+
+.instructions ol {
+    list-style: decimal inside;
+    color: var(--text-color);
+    line-height: 1.8;
+}
+
+.instructions li {
+    margin-bottom: 12px;
+    transition: color 0.3s ease;
+}
+
+.instructions strong {
+    color: var(--heading-color);
+    font-weight: 600;
+}
+
+.instructions a {
+    color: var(--button-bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.instructions a:hover {
+    color: var(--button-hover);
+    text-decoration: underline;
+}
+
+.id-example {
+    background: var(--container-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+}
+
+.id-example code {
+    color: var(--heading-color);
+    font-size: 13px;
+    word-break: break-all;
+}
+
+.id-example code strong {
+    color: var(--button-bg);
+    font-weight: 700;
+}
+
+.example-text {
+    color: var(--text-color);
+    font-size: 13px;
+    margin-top: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .video-container {
     position: relative;
     width: 100%;
