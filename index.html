@@ -33,7 +33,7 @@
                 <div class="tab-panel hidden" id="panelId">
                     <div class="input-group">
                         <input type="text" id="videoId" placeholder="ID do IMDB (ex: tt0137523)" value="">
-                        <button id="loadVideoButton" onclick="loadVideo()">Carregar</button>
+                        <button id="loadVideoButton">Carregar</button>
                     </div>
                     <p class="info-text">
                     <div class="instructions">
@@ -65,6 +65,14 @@
         </div>
 
         <div class="error" id="errorMsg"></div>
+
+        <div class="movie-details hidden" id="movieDetails">
+            <h2 id="movieTitle"></h2>
+            <div class="movie-meta">
+                <span id="movieYear"></span>
+                <span id="movieRuntime"></span>
+            </div>
+        </div>
 
         <div class="video-container">
             <iframe id="videoFrame" src="https://vidsrc-embed.ru/embed/movie/tt0137523" allowfullscreen></iframe>

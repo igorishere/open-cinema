@@ -21,7 +21,12 @@ class MovieSearch {
         this.inputField = document.getElementById('movieSearch');
         this.inputSearchById = document.getElementById('videoId');
         this.resultsContainer = document.getElementById('searchResults');
+        this.movieDetails = document.getElementById('movieDetails');
+        this.movieTitle = document.getElementById('movieTitle');
+        this.movieYear = document.getElementById('movieYear');
+        this.movieRuntime = document.getElementById('movieRuntime');
         this.debounceTimer = null;
+        this.currentMovieId = null;
 
         this.initialize();
     }
@@ -29,13 +34,18 @@ class MovieSearch {
     initialize() {
         this.inputField.addEventListener('input', (event) => this.handleSearchByTitle(event));
         document.getElementById('loadVideoButton').addEventListener('click', (event) => this.handleSearchById(event));
+        this.inputSearchById.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                this.handleSearchById(event);
+            }
+        });
     }
 
-    handleSearchById(event) {
+    async handleSearchById(event) {
         event.preventDefault();
         const videoId = this.inputSearchById.value.trim();
         if (videoId) {
-            this.loadVideo(videoId);
+            await this.loadMovieById(videoId);
         }
     }
 
@@ -54,6 +64,50 @@ class MovieSearch {
         const newSrc = `https://vidsrc-embed.ru/embed/movie/${videoId}`;
         document.getElementById('videoFrame').src = newSrc;
     }
+
+    async loadMovieById(imdbId) {
+        this.currentMovieId = imdbId;
+        this.loadVideo(imdbId);
+        this.hideMovieDetails();
+
+        const movieDetails = await this.fetchMovieDetails(imdbId);
+
+        if (movieDetails && this.currentMovieId === imdbId) {
+            this.showMovieDetails(movieDetails);
+        }
+    }
+
+    async fetchMovieDetails(imdbId) {
+        try {
+            const response = await fetch(
+                `${API_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}&type=movie`
+            );
+            const data = await response.json();
+
+            if (data.Response === 'True') {
+                return data;
+            }
+        } catch (error) {
+            return null;
+        }
+
+        return null;
+    }
+
+    showMovieDetails(movie) {
+        this.movieTitle.textContent = movie.Title || 'Título não informado';
+        this.movieYear.textContent = `Ano: ${movie.Year || 'Não informado'}`;
+        this.movieRuntime.textContent = `Duração: ${movie.Runtime || 'Não informada'}`;
+        this.movieDetails.classList.remove('hidden');
+    }
+
+    hideMovieDetails() {
+        this.movieTitle.textContent = '';
+        this.movieYear.textContent = '';
+        this.movieRuntime.textContent = '';
+        this.movieDetails.classList.add('hidden');
+    }
+
     handleSearchByTitle(event) {
         const query = event.target.value.trim();
 
@@ -141,9 +195,9 @@ class MovieSearch {
         return div;
     }
 
-    selectMovie(movie) {
+    async selectMovie(movie) {
         this.clearResults();
-        this.loadVideo(movie.imdbID);
+        await this.loadMovieById(movie.imdbID);
     }
 }
 
