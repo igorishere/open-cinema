@@ -19,6 +19,7 @@ function switchTab(tab) {
 class MovieSearch {
     constructor() {
         this.inputField = document.getElementById('movieSearch');
+        this.inputSearchById = document.getElementById('videoId');
         this.resultsContainer = document.getElementById('searchResults');
         this.debounceTimer = null;
 
@@ -26,10 +27,34 @@ class MovieSearch {
     }
 
     initialize() {
-        this.inputField.addEventListener('input', (event) => this.handleSearch(event));
+        this.inputField.addEventListener('input', (event) => this.handleSearchByTitle(event));
+        document.getElementById('loadVideoButton').addEventListener('click', (event) => this.handleSearchById(event));
     }
 
-    handleSearch(event) {
+    handleSearchById(event) {
+        event.preventDefault();
+        const videoId = this.inputSearchById.value.trim();
+        if (videoId) {
+            this.loadVideo(videoId);
+        }
+    }
+
+    loadVideo(id) {
+        const videoId = id;
+        const errorMsg = document.getElementById('errorMsg');
+
+        if (!videoId) {
+            errorMsg.textContent = 'Por favor, digite um ID de vídeo válido!';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        errorMsg.style.display = 'none';
+
+        const newSrc = `https://vidsrc-embed.ru/embed/movie/${videoId}`;
+        document.getElementById('videoFrame').src = newSrc;
+    }
+    handleSearchByTitle(event) {
         const query = event.target.value.trim();
 
         clearTimeout(this.debounceTimer);
@@ -59,7 +84,6 @@ class MovieSearch {
                 this.displayEmpty(data.Error || 'No results found.');
             }
         } catch (error) {
-            console.error('Error fetching movies:', error);
             this.displayEmpty('Connection error. Please try again.');
         }
     }
@@ -81,9 +105,8 @@ class MovieSearch {
     }
 
     showLoading() {
-        console.log('Showing loading indicator');
-        this.resultsContainer.innerHTML = `<div class="search-loading">🔍 Searching...</div>`;
         this.resultsContainer.classList.add('active');
+        this.resultsContainer.innerHTML = `<div class="search-loading">🔍 Searching...</div>`;
     }
 
     clearResults() {
@@ -118,19 +141,12 @@ class MovieSearch {
         return div;
     }
 
-    /**
-     * Selects a movie and loads it in the video player
-     * @param {Object} movie - Movie object with imdbID and Title
-     */
     selectMovie(movie) {
         this.clearResults();
-        closeModal();
-        loadVideo(movie.imdbID);
+        this.loadVideo(movie.imdbID);
     }
 }
 
-// ── Initialize on DOM ready ────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
     new MovieSearch();
-    openModal();
 });

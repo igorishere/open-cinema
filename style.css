@@ -200,26 +200,6 @@ h1 {
     opacity: 0.7;
 }
 
-.search-results {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--container-bg);
-    border: 2px solid var(--input-border);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    max-height: 340px;
-    overflow-y: auto;
-    z-index: 1000;
-    display: none;
-    box-shadow: 0 8px 16px var(--container-shadow);
-}
-
-.search-results.active {
-    display: block;
-}
-
 .search-result-item {
     padding: 12px 15px;
     border-bottom: 1px solid var(--input-border);
