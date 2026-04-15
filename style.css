@@ -134,6 +134,10 @@ h1 {
     transition: all 0.3s ease;
 }
 
+.container > .search-container {
+    margin: 0 auto 30px;
+}
+
 /* ── Tabs ── */
 .search-tabs {
     display: flex;
