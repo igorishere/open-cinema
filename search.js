@@ -25,6 +25,7 @@ class MovieSearch {
         this.movieTitle = document.getElementById('movieTitle');
         this.movieYear = document.getElementById('movieYear');
         this.movieRuntime = document.getElementById('movieRuntime');
+        this.seasonList = document.getElementById('seasonList');
         this.debounceTimer = null;
         this.currentMovieId = null;
 
@@ -80,7 +81,7 @@ class MovieSearch {
     async fetchMovieDetails(imdbId) {
         try {
             const response = await fetch(
-                `${API_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}&type=movie`
+                `${API_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}`
             );
             const data = await response.json();
 
@@ -99,6 +100,7 @@ class MovieSearch {
         this.movieYear.textContent = `Ano: ${movie.Year || 'Não informado'}`;
         this.movieRuntime.textContent = `Duração: ${movie.Runtime || 'Não informada'}`;
         this.movieDetails.classList.remove('hidden');
+        this.renderSeasons(movie);
     }
 
     hideMovieDetails() {
@@ -106,6 +108,35 @@ class MovieSearch {
         this.movieYear.textContent = '';
         this.movieRuntime.textContent = '';
         this.movieDetails.classList.add('hidden');
+        this.hideSeasons();
+    }
+
+    renderSeasons(movie) {
+        const seasonCount = Number.parseInt(movie.totalSeasons, 10);
+        const isSeries = movie.Type === 'series';
+
+        if (!isSeries || !Number.isInteger(seasonCount) || seasonCount < 1) {
+            this.hideSeasons();
+            return;
+        }
+
+        this.seasonList.innerHTML = '';
+
+        for (let seasonNumber = 1; seasonNumber <= seasonCount; seasonNumber += 1) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'season-button';
+            button.textContent = `Temporada ${seasonNumber}`;
+            button.setAttribute('aria-label', `Selecionar temporada ${seasonNumber}`);
+            this.seasonList.appendChild(button);
+        }
+
+        this.seasonList.classList.remove('hidden');
+    }
+
+    hideSeasons() {
+        this.seasonList.innerHTML = '';
+        this.seasonList.classList.add('hidden');
     }
 
     handleSearchByTitle(event) {
@@ -128,7 +159,7 @@ class MovieSearch {
     async fetchMovies(query) {
         try {
             const response = await fetch(
-                `${API_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}&type=movie`
+                `${API_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}`
             );
             const data = await response.json();
 

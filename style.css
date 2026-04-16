@@ -125,6 +125,62 @@ h1 {
     padding: 6px 10px;
 }
 
+.season-list {
+    display: flex;
+    gap: 10px;
+    margin: -2px 0 18px;
+    overflow-x: auto;
+    padding: 2px 2px 12px;
+    scrollbar-color: var(--button-bg) transparent;
+    scrollbar-width: thin;
+}
+
+.season-list.hidden {
+    display: none;
+}
+
+.season-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.season-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.season-list::-webkit-scrollbar-thumb {
+    background: var(--button-bg);
+    border-radius: 8px;
+}
+
+.season-button {
+    flex: 0 0 auto;
+    min-width: 124px;
+    padding: 10px 14px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: var(--container-bg);
+    color: var(--heading-color);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    white-space: nowrap;
+}
+
+.season-button:hover,
+.season-button:focus-visible {
+    background: rgba(102, 126, 234, 0.08);
+    border-color: var(--button-bg);
+    color: var(--button-bg);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+.season-button:active {
+    transform: translateY(0);
+}
+
 .video-container {
     position: relative;
     width: 100%;
