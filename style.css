@@ -125,7 +125,8 @@ h1 {
     padding: 6px 10px;
 }
 
-.season-list {
+.season-list,
+.episode-list {
     display: flex;
     gap: 10px;
     margin: -2px 0 18px;
@@ -135,24 +136,33 @@ h1 {
     scrollbar-width: thin;
 }
 
-.season-list.hidden {
+.season-list.hidden,
+.episode-list.hidden {
     display: none;
 }
 
-.season-list::-webkit-scrollbar {
+.season-list::-webkit-scrollbar,
+.episode-list::-webkit-scrollbar {
     height: 8px;
 }
 
-.season-list::-webkit-scrollbar-track {
+.season-list::-webkit-scrollbar-track,
+.episode-list::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.season-list::-webkit-scrollbar-thumb {
+.season-list::-webkit-scrollbar-thumb,
+.episode-list::-webkit-scrollbar-thumb {
     background: var(--button-bg);
     border-radius: 8px;
 }
 
-.season-button {
+.episode-list {
+    margin-top: -10px;
+}
+
+.season-button,
+.episode-button {
     flex: 0 0 auto;
     min-width: 124px;
     padding: 10px 14px;
@@ -168,8 +178,20 @@ h1 {
     white-space: nowrap;
 }
 
+.episode-button {
+    max-width: 260px;
+    min-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
 .season-button:hover,
-.season-button:focus-visible {
+.season-button:focus-visible,
+.episode-button:hover,
+.episode-button:focus-visible,
+.season-button.active,
+.episode-button.active {
     background: rgba(102, 126, 234, 0.08);
     border-color: var(--button-bg);
     color: var(--button-bg);
@@ -177,8 +199,17 @@ h1 {
     transform: translateY(-1px);
 }
 
-.season-button:active {
+.season-button:active,
+.episode-button:active {
     transform: translateY(0);
+}
+
+.episode-status {
+    flex: 0 0 auto;
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 2px;
 }
 
 .video-container {

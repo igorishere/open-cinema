@@ -26,8 +26,11 @@ class MovieSearch {
         this.movieYear = document.getElementById('movieYear');
         this.movieRuntime = document.getElementById('movieRuntime');
         this.seasonList = document.getElementById('seasonList');
+        this.episodeList = document.getElementById('episodeList');
         this.debounceTimer = null;
         this.currentMovieId = null;
+        this.currentSeason = null;
+        this.currentEpisodeId = null;
 
         this.initialize();
     }
@@ -50,11 +53,10 @@ class MovieSearch {
         }
     }
 
-    loadVideo(id) {
-        const videoId = id;
+    loadVideo(videoUrl) {
         const errorMsg = document.getElementById('errorMsg');
 
-        if (!videoId) {
+        if (!videoUrl) {
             errorMsg.textContent = 'Por favor, digite um ID de vídeo válido!';
             errorMsg.style.display = 'block';
             return;
@@ -62,19 +64,29 @@ class MovieSearch {
 
         errorMsg.style.display = 'none';
 
-        const newSrc = `https://vidsrc-embed.ru/embed/movie/${videoId}`;
-        document.getElementById('videoFrame').src = newSrc;
+        document.getElementById('videoFrame').src = videoUrl;
+    }
+
+    loadTitleVideo(title) {
+        const imdbId = title.imdbID;
+        const videoType = title.Type === 'series' ? 'tv' : 'movie';
+
+        this.loadVideo(`https://vidsrc-embed.ru/embed/${videoType}/${imdbId}`);
+    }
+
+    loadEpisodeVideo(seriesImdbId, seasonNumber, episodeNumber) {
+        this.loadVideo(`https://vidsrc-embed.ru/embed/tv/${seriesImdbId}/${seasonNumber}-${episodeNumber}`);
     }
 
     async loadMovieById(imdbId) {
         this.currentMovieId = imdbId;
-        this.loadVideo(imdbId);
         this.hideMovieDetails();
 
         const movieDetails = await this.fetchMovieDetails(imdbId);
 
         if (movieDetails && this.currentMovieId === imdbId) {
             this.showMovieDetails(movieDetails);
+            this.loadTitleVideo(movieDetails);
         }
     }
 
@@ -109,11 +121,14 @@ class MovieSearch {
         this.movieRuntime.textContent = '';
         this.movieDetails.classList.add('hidden');
         this.hideSeasons();
+        this.hideEpisodes();
     }
 
     renderSeasons(movie) {
         const seasonCount = Number.parseInt(movie.totalSeasons, 10);
         const isSeries = movie.Type === 'series';
+
+        this.hideEpisodes();
 
         if (!isSeries || !Number.isInteger(seasonCount) || seasonCount < 1) {
             this.hideSeasons();
@@ -128,6 +143,8 @@ class MovieSearch {
             button.className = 'season-button';
             button.textContent = `Temporada ${seasonNumber}`;
             button.setAttribute('aria-label', `Selecionar temporada ${seasonNumber}`);
+            button.setAttribute('aria-pressed', 'false');
+            button.addEventListener('click', () => this.selectSeason(movie.imdbID, seasonNumber, button));
             this.seasonList.appendChild(button);
         }
 
@@ -137,6 +154,100 @@ class MovieSearch {
     hideSeasons() {
         this.seasonList.innerHTML = '';
         this.seasonList.classList.add('hidden');
+        this.currentSeason = null;
+    }
+
+    async selectSeason(imdbId, seasonNumber, selectedButton) {
+        this.currentSeason = seasonNumber;
+        this.currentEpisodeId = null;
+        this.markActiveButton(this.seasonList, selectedButton);
+        this.showEpisodesLoading();
+
+        const seasonDetails = await this.fetchSeasonEpisodes(imdbId, seasonNumber);
+
+        if (this.currentMovieId !== imdbId || this.currentSeason !== seasonNumber) {
+            return;
+        }
+
+        if (seasonDetails && Array.isArray(seasonDetails.Episodes)) {
+            this.renderEpisodes(seasonDetails.Episodes);
+        } else {
+            this.displayEpisodesEmpty('Não foi possível carregar os episódios.');
+        }
+    }
+
+    async fetchSeasonEpisodes(imdbId, seasonNumber) {
+        try {
+            const response = await fetch(
+                `${API_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}&Season=${encodeURIComponent(seasonNumber)}`
+            );
+            const data = await response.json();
+
+            if (data.Response === 'True') {
+                return data;
+            }
+        } catch (error) {
+            return null;
+        }
+
+        return null;
+    }
+
+    renderEpisodes(episodes) {
+        if (episodes.length === 0) {
+            this.displayEpisodesEmpty('Nenhum episódio encontrado para esta temporada.');
+            return;
+        }
+
+        const orderedEpisodes = [...episodes].sort((firstEpisode, secondEpisode) => {
+            return Number.parseInt(firstEpisode.Episode, 10) - Number.parseInt(secondEpisode.Episode, 10);
+        });
+
+        this.episodeList.innerHTML = '';
+
+        orderedEpisodes.forEach((episode) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'episode-button';
+            button.textContent = `${episode.Episode} - ${episode.Title}`;
+            button.setAttribute('aria-label', `Reproduzir episódio ${episode.Episode}: ${episode.Title}`);
+            button.setAttribute('aria-pressed', 'false');
+            button.addEventListener('click', () => this.selectEpisode(episode, button));
+            this.episodeList.appendChild(button);
+        });
+
+        this.episodeList.classList.remove('hidden');
+    }
+
+    selectEpisode(episode, selectedButton) {
+        this.currentEpisodeId = episode.imdbID;
+        this.markActiveButton(this.episodeList, selectedButton);
+        this.loadEpisodeVideo(this.currentMovieId, this.currentSeason, episode.Episode);
+    }
+
+    showEpisodesLoading() {
+        this.episodeList.innerHTML = '<div class="episode-status">Carregando episódios...</div>';
+        this.episodeList.classList.remove('hidden');
+    }
+
+    displayEpisodesEmpty(message) {
+        this.episodeList.innerHTML = `<div class="episode-status">${message}</div>`;
+        this.episodeList.classList.remove('hidden');
+    }
+
+    hideEpisodes() {
+        this.episodeList.innerHTML = '';
+        this.episodeList.classList.add('hidden');
+        this.currentSeason = null;
+        this.currentEpisodeId = null;
+    }
+
+    markActiveButton(container, selectedButton) {
+        container.querySelectorAll('button').forEach((button) => {
+            const isSelected = button === selectedButton;
+            button.classList.toggle('active', isSelected);
+            button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+        });
     }
 
     handleSearchByTitle(event) {
