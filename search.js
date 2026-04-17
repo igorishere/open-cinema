@@ -317,7 +317,8 @@ class MovieSearch {
         const poster = movie.Poster !== 'N/A'
             ? movie.Poster
             : 'https://via.placeholder.com/40x60?text=No+Image';
-
+        
+        const videoType = movie.Type === 'series' ? 'Série' : 'Filme';
         div.innerHTML = `
             <img
                 src="${poster}"
@@ -328,7 +329,7 @@ class MovieSearch {
             <div class="search-result-info">
                 <div class="search-result-title">${movie.Title}</div>
                 <div class="search-result-meta">
-                    <span>${movie.Year}</span>
+                    <span>${movie.Year}</span><span>${videoType}</span>
                 </div>
             </div>
         `;
