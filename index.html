@@ -8,80 +8,88 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="search-only">
     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
 
-    <div class="container">
-        <h1>🎬 Open Cinema</h1>
+    <main class="app-shell">
+        <section class="page-section search-section" id="top">
+            <div class="container search-panel">
+                <h1>🎬 Open Cinema</h1>
 
-        <div class="search-container">
-            <div class="search-tabs">
-                <button class="search-tab active" id="tabTitle" onclick="switchTab('title')">🔍 Busca por
-                    título</button>
-                <button class="search-tab" id="tabId" onclick="switchTab('id')">🎬 Busca por ID do IMDB</button>
+                <div class="search-container">
+                    <div class="search-tabs">
+                        <button class="search-tab active" id="tabTitle" onclick="switchTab('title')">🔍 Busca por
+                            título</button>
+                        <button class="search-tab" id="tabId" onclick="switchTab('id')">🎬 Busca por ID do IMDB</button>
+                    </div>
+
+                    <div class="search-body">
+                        <div class="tab-panel" id="panelTitle">
+                            <div class="search-container">
+                                <input type="text" id="movieSearch" class="search-input"
+                                    placeholder="Digite o nome do filme..." autocomplete="off">
+                                <div class="search-results" id="searchResults"></div>
+                            </div>
+                        </div>
+
+                        <div class="tab-panel hidden" id="panelId">
+                            <div class="input-group">
+                                <input type="text" id="videoId" placeholder="ID do IMDB (ex: tt0137523)" value="">
+                                <button id="loadVideoButton">Carregar</button>
+                            </div>
+                            <div class="info-text instructions">
+                                <h2>📌 Como usar</h2>
+                                <ol>
+                                    <li>
+                                        <strong>Acesse o IMDb:</strong> Visite <a href="https://www.imdb.com"
+                                            target="_blank" rel="noopener noreferrer">www.imdb.com</a>
+                                    </li>
+                                    <li>
+                                        <strong>Pesquise o filme:</strong> Use a barra de busca para encontrar o filme
+                                        que deseja assistir
+                                    </li>
+                                    <li>
+                                        <strong>Copie o ID:</strong> Na página do filme, copie o ID da URL. Por exemplo:
+                                        <div class="id-example">
+                                            <code>https://www.imdb.com/title/<strong>tt0317219</strong>/...</code>
+                                            <p class="example-text">O ID é <strong>tt0317219</strong></p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <strong>Cole aqui:</strong> Insira o ID no campo acima e clique em "Carregar"
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="error" id="errorMsg"></div>
+                </div>
             </div>
+        </section>
 
-            <div class="search-body">
-                <div class="tab-panel" id="panelTitle">
-                    <div class="search-container">
-                        <input type="text" id="movieSearch" class="search-input" placeholder="Digite o nome do filme..."
-                            autocomplete="off">
-                        <div class="search-results" id="searchResults"></div>
+        <section class="page-section player-section hidden" id="playerSection" aria-label="Player e detalhes do título">
+            <div class="container player-panel">
+                <a href="#top" class="top-anchor" id="backToTop">Voltar ao topo</a>
+
+                <div class="movie-details hidden" id="movieDetails">
+                    <h2 id="movieTitle"></h2>
+                    <div class="movie-meta">
+                        <span id="movieYear"></span>
+                        <span id="movieRuntime"></span>
                     </div>
                 </div>
 
-                <div class="tab-panel hidden" id="panelId">
-                    <div class="input-group">
-                        <input type="text" id="videoId" placeholder="ID do IMDB (ex: tt0137523)" value="">
-                        <button id="loadVideoButton">Carregar</button>
-                    </div>
-                    <p class="info-text">
-                    <div class="instructions">
-                        <h2>📌 Como usar</h2>
-                        <ol>
-                            <li>
-                                <strong>Acesse o IMDb:</strong> Visite <a href="https://www.imdb.com" target="_blank"
-                                    rel="noopener noreferrer">www.imdb.com</a>
-                            </li>
-                            <li>
-                                <strong>Pesquise o filme:</strong> Use a barra de busca para encontrar o filme que
-                                deseja assistir
-                            </li>
-                            <li>
-                                <strong>Copie o ID:</strong> Na página do filme, copie o ID da URL. Por exemplo:
-                                <div class="id-example">
-                                    <code>https://www.imdb.com/title/<strong>tt0317219</strong>/...</code>
-                                    <p class="example-text">O ID é <strong>tt0317219</strong></p>
-                                </div>
-                            </li>
-                            <li>
-                                <strong>Cole aqui:</strong> Insira o ID no campo acima e clique em "Carregar Vídeo"
-                            </li>
-                        </ol>
-                    </div>
-                    </p>
+                <div class="season-list hidden" id="seasonList" aria-label="Temporadas disponíveis"></div>
+
+                <div class="episode-list hidden" id="episodeList" aria-label="Episódios disponíveis"></div>
+
+                <div class="video-container">
+                    <iframe id="videoFrame" title="Player Open Cinema" allowfullscreen></iframe>
                 </div>
             </div>
-        </div>
-
-        <div class="error" id="errorMsg"></div>
-
-        <div class="movie-details hidden" id="movieDetails">
-            <h2 id="movieTitle"></h2>
-            <div class="movie-meta">
-                <span id="movieYear"></span>
-                <span id="movieRuntime"></span>
-            </div>
-        </div>
-
-        <div class="season-list hidden" id="seasonList" aria-label="Temporadas disponíveis"></div>
-
-        <div class="episode-list hidden" id="episodeList" aria-label="Episódios disponíveis"></div>
-
-        <div class="video-container">
-            <iframe id="videoFrame" src="https://vidsrc-embed.ru/embed/movie/tt0137523" allowfullscreen></iframe>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script src="themes.js"></script>
     <script src="search.js"></script>

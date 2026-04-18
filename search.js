@@ -27,6 +27,7 @@ class MovieSearch {
         this.movieRuntime = document.getElementById('movieRuntime');
         this.seasonList = document.getElementById('seasonList');
         this.episodeList = document.getElementById('episodeList');
+        this.playerSection = document.getElementById('playerSection');
         this.debounceTimer = null;
         this.currentMovieId = null;
         this.currentSeason = null;
@@ -50,6 +51,8 @@ class MovieSearch {
         const videoId = this.inputSearchById.value.trim();
         if (videoId) {
             await this.loadMovieById(videoId);
+        } else {
+            this.showError('Por favor, digite um ID do IMDb válido!');
         }
     }
 
@@ -64,7 +67,10 @@ class MovieSearch {
 
         errorMsg.style.display = 'none';
 
-        document.getElementById('videoFrame').src = videoUrl;
+        const videoFrame = document.getElementById('videoFrame');
+        videoFrame.removeAttribute('srcdoc');
+        videoFrame.src = videoUrl;
+        this.revealPlayerSection();
     }
 
     loadTitleVideo(title) {
@@ -86,7 +92,15 @@ class MovieSearch {
 
         if (movieDetails && this.currentMovieId === imdbId) {
             this.showMovieDetails(movieDetails);
-            this.loadTitleVideo(movieDetails);
+
+            if (movieDetails.Type === 'series') {
+                this.resetVideo();
+                this.revealPlayerSection();
+            } else {
+                this.loadTitleVideo(movieDetails);
+            }
+        } else {
+            this.showError('Não foi possível carregar este título.');
         }
     }
 
@@ -223,6 +237,38 @@ class MovieSearch {
         this.currentEpisodeId = episode.imdbID;
         this.markActiveButton(this.episodeList, selectedButton);
         this.loadEpisodeVideo(this.currentMovieId, this.currentSeason, episode.Episode);
+    }
+
+    revealPlayerSection() {
+        this.playerSection.classList.remove('hidden');
+        document.body.classList.remove('search-only');
+        document.body.classList.add('player-ready');
+
+        window.requestAnimationFrame(() => {
+            this.playerSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    }
+
+    resetVideo() {
+        const videoFrame = document.getElementById('videoFrame');
+        videoFrame.removeAttribute('src');
+        videoFrame.srcdoc = `
+            <!doctype html>
+            <html lang="pt-BR">
+                <body style="margin:0;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;padding:24px;box-sizing:border-box;">
+                    Selecione uma temporada e um episódio para iniciar.
+                </body>
+            </html>
+        `;
+    }
+
+    showError(message) {
+        const errorMsg = document.getElementById('errorMsg');
+        errorMsg.textContent = message;
+        errorMsg.style.display = 'block';
     }
 
     showEpisodesLoading() {
