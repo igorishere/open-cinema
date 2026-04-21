@@ -373,6 +373,56 @@ h1 {
     padding: 24px;
 }
 
+.recent-watched {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 24px 24px;
+    color: var(--text-color);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.recent-watched:empty {
+    display: none;
+}
+
+.recent-watched p {
+    margin: 0;
+}
+
+.recent-watched h2 {
+    color: var(--heading-color);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 2px;
+}
+
+.recent-watched a,
+.recent-watched a:visited {
+    color: var(--text-color);
+    font: inherit;
+    text-decoration: none;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.recent-watched a:hover,
+.recent-watched a:focus-visible,
+.recent-watched a:active {
+    color: var(--text-color);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+}
+
+.recent-watched a:focus-visible {
+    outline: 2px solid var(--input-focus-border);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
 .tab-panel.hidden {
     display: none;
 }

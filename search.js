@@ -28,6 +28,7 @@ class MovieSearch {
         this.seasonList = document.getElementById('seasonList');
         this.episodeList = document.getElementById('episodeList');
         this.playerSection = document.getElementById('playerSection');
+        this.recentWatched = document.getElementById('recentWatched');
         this.debounceTimer = null;
         this.currentMovieId = null;
         this.currentSeason = null;
@@ -44,6 +45,33 @@ class MovieSearch {
                 this.handleSearchById(event);
             }
         });
+        this.loadRecentWatched();
+    }
+
+    loadRecentWatched() {
+        const recentWatchs = JSON.parse(localStorage.getItem('recentWatchs')) || [];
+        this.recentWatched.innerHTML = '';
+
+        if(recentWatchs.length > 0){
+            const title = document.createElement('h2');
+            title.textContent = 'Recentemente assistidos';
+            this.recentWatched.appendChild(title);
+
+            recentWatchs.forEach(movie => {
+                const paragraph = document.createElement('p');
+                const link = document.createElement('a');
+
+                link.href = '#';
+                link.textContent = movie.title;
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    this.loadMovieById(movie.imdbID);
+                });
+
+                paragraph.appendChild(link);
+                this.recentWatched.appendChild(paragraph);
+            });
+        }
     }
 
     async handleSearchById(event) {
@@ -92,6 +120,13 @@ class MovieSearch {
 
         if (movieDetails && this.currentMovieId === imdbId) {
             this.showMovieDetails(movieDetails);
+            const recentMovie = {
+                imdbID: movieDetails.imdbID,
+                title: movieDetails.Title,
+            };
+            
+            this.addToRecentWatched(recentMovie)
+            this.loadRecentWatched();
 
             if (movieDetails.Type === 'series') {
                 this.resetVideo();
@@ -119,6 +154,17 @@ class MovieSearch {
         }
 
         return null;
+    }
+
+    addToRecentWatched(movie){
+        const recentWatchs = JSON.parse(localStorage.getItem('recentWatchs')) || [];
+        const isAlreaadySaved = recentWatchs.some( saved => saved.imdbID === movie.imdbID);
+
+        if(!isAlreaadySaved){
+            recentWatchs.push(movie);
+            recentWatchs.splice(0, recentWatchs.length - 5);
+            localStorage.setItem('recentWatchs', JSON.stringify(recentWatchs));
+        }
     }
 
     showMovieDetails(movie) {
