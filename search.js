@@ -1,5 +1,6 @@
 const API_KEY = '8310e7cb';
-const API_URL = 'https://www.omdbapi.com/';
+const API_MOVIE_DETAILS_URL = 'https://www.omdbapi.com/';
+const API_PLAYER_URL = 'https://vsembed.ru/embed';
 
 function switchTab(tab) {
     const searchByTitle = tab === 'title';
@@ -105,11 +106,11 @@ class MovieSearch {
         const imdbId = title.imdbID;
         const videoType = title.Type === 'series' ? 'tv' : 'movie';
 
-        this.loadVideo(`https://vidsrc-embed.ru/embed/${videoType}/${imdbId}`);
+        this.loadVideo(`${API_PLAYER_URL}/${videoType}/${imdbId}`);
     }
 
     loadEpisodeVideo(seriesImdbId, seasonNumber, episodeNumber) {
-        this.loadVideo(`https://vidsrc-embed.ru/embed/tv/${seriesImdbId}/${seasonNumber}-${episodeNumber}`);
+        this.loadVideo(`${API_PLAYER_URL}/tv/${seriesImdbId}/${seasonNumber}-${episodeNumber}`);
     }
 
     async loadMovieById(imdbId) {
@@ -142,7 +143,7 @@ class MovieSearch {
     async fetchMovieDetails(imdbId) {
         try {
             const response = await fetch(
-                `${API_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}`
+                `${API_MOVIE_DETAILS_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}`
             );
             const data = await response.json();
 
@@ -239,7 +240,7 @@ class MovieSearch {
     async fetchSeasonEpisodes(imdbId, seasonNumber) {
         try {
             const response = await fetch(
-                `${API_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}&Season=${encodeURIComponent(seasonNumber)}`
+                `${API_MOVIE_DETAILS_URL}?apikey=${API_KEY}&i=${encodeURIComponent(imdbId)}&Season=${encodeURIComponent(seasonNumber)}`
             );
             const data = await response.json();
 
@@ -362,7 +363,7 @@ class MovieSearch {
     async fetchMovies(query) {
         try {
             const response = await fetch(
-                `${API_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}`
+                `${API_MOVIE_DETAILS_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}`
             );
             const data = await response.json();
 
